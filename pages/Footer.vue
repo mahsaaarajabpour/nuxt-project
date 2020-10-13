@@ -151,9 +151,11 @@ export default {
   margin: 0
 }
 
-@media (max-width: 991px) {
-  .site-footer [class^=col-] {
-    margin-bottom: 30px
+@media (min-width: 768px) and (min-height: 1024px ) {
+  .site-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
   }
 }
 

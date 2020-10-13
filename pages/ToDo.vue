@@ -1,7 +1,7 @@
 <template>
   <div class="body">
     <div class="container">
-      <h4> todo with vuex</h4>
+      <p style="padding-bottom: 50px"> todo with vuex</p>
       <div class="col-lg-8 col-md-10 col-sm-12 concentrated">
         <section class="todoapp">
           <header class="header">
@@ -19,12 +19,12 @@
                   :class="{completed:item.completed , editing:item==Editing}">
                 <div class="view">
                   <input class="checkbox"
-                         type="checkbox" v-model="item.completed">
+                         type="checkbox" @click="CompletedItem(item)" :checked="item.completed">
                   <label @dblclick="EditedItem(item)"> {{ item.title }}</label>
                   <button class="destroy" @click="DeleteItem(item)"></button>
                 </div>
-                <input class="edit" type="text" v-model="item.title" @keydown.enter="StoreItem(item)"
-                       @blur="StoreItem(item)">
+                <input class="edit" type="text" v-model="SetItem"
+                       @blur="StoreItem(item)" @keydown.enter="$event.target.blur()">
               </li>
             </ul>
           </section>
@@ -33,10 +33,10 @@
                         <strong>{{ itemCounter|ActiveItem }}</strong>
                     </span>
             <ul class="filters">
-              <li><a :class="{selected:this.visibility=='all'}" @click="visibility='all'">all</a></li>
-              <li><a :class="{selected: this.visibility=='active'}" @click="visibility='active'">active</a>
+              <li><a :class="{selected:this.visibility==='all'}" @click="visibility='all'">all</a></li>
+              <li><a :class="{selected: this.visibility==='active'}" @click="visibility='active'">active</a>
               </li>
-              <li><a :class="{selected:this.visibility=='completed'}" @click="visibility='completed'">completed</a>
+              <li><a :class="{selected:this.visibility==='completed'}" @click="visibility='completed'">completed</a>
               </li>
             </ul>
             <button class="clear-completed" @click="RemoveActiveItem"> Delete completed</button>
@@ -48,18 +48,28 @@
 </template>
 
 <script>
-// import TodoMixin from "../mixins/TodoMixin";
-import {mapActions} from 'vuex'
+import TodoMixin from "../mixins/TodoMixin";
+import {mapActions, mapGetters} from 'vuex'
+import store from "@/components/store";
 
 export default {
   name: "ToDo",
-  // mixins: [TodoMixin],
+  mixins: [TodoMixin],
   data() {
     return {
       visibility: 'all'
     }
   },
   computed: {
+    ...mapGetters(['ChangeItem', 'Items']),
+    SetItem: {
+      get() {
+        return this.$store.getters.ChangeItem
+      },
+      set(value) {
+        return this.$store.dispatch("ChangeItem", value)
+      }
+    },
     NewItem: {
       get() {
         return this.$store.getters.NewItem
@@ -73,7 +83,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['AddItem', 'RemoveItem', 'RemoveActiveItem', 'EditItem', 'SaveItem']),
+    ...mapActions(['AddItem', 'RemoveItem', 'RemoveActiveItem', 'EditItem', 'SaveItem', 'Completed']),
     DeleteItem(item) {
       this.RemoveItem({item: item})
     },
@@ -83,6 +93,9 @@ export default {
     StoreItem(item) {
       this.SaveItem({item: item})
     },
+    CompletedItem(item) {
+      this.Completed({item: item})
+    }
   },
   filters: {
     ActiveItem(value) {
@@ -114,6 +127,7 @@ button {
   -moz-osx-font-smoothing: grayscale;
 }
 
+
 :focus {
   outline: 0;
 }
@@ -124,7 +138,6 @@ button {
 
 .todoapp {
   background: #fff;
-  /* margin: 130px 0 40px 0; */
   position: relative;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2),
   0 25px 50px 0 rgba(0, 0, 0, 0.1);
@@ -179,7 +192,8 @@ button {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-.checkbox{
+
+.checkbox {
   text-align: center;
   width: 40px;
   /* auto, since non-WebKit browsers doesn't support input styling */
@@ -190,8 +204,9 @@ button {
   margin: auto 0;
   border: none; /* Mobile Safari */
   /*-webkit-appearance: none;*/
-  appearance: none;
+  /*appearance: none;*/
 }
+
 .new-todo {
   padding: 16px 60px 16px 16px;
   border: none;
@@ -312,8 +327,8 @@ label[for='toggle-all'] {
 
 .footer {
   color: #777;
-  padding: 20px 15px;
-  height: 20px;
+  font-size: 1.3vw;
+  padding: 25px 15px;
   text-align: center;
   border-top: 1px solid #e6e6e6;
 }
@@ -358,7 +373,6 @@ label[for='toggle-all'] {
 .filters li a {
   color: inherit;
   margin: 3px;
-  padding: 3px 7px;
   text-decoration: none;
   border: 1px solid transparent;
   border-radius: 3px;
@@ -376,7 +390,6 @@ label[for='toggle-all'] {
 html .clear-completed:active {
   float: left;
   position: relative;
-  line-height: 20px;
   text-decoration: none;
   cursor: pointer;
 }
@@ -385,27 +398,27 @@ html .clear-completed:active {
   text-decoration: underline;
 }
 
-.info {
-  margin: 65px auto 0;
-  color: #bfbfbf;
-  font-size: 10px;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-  text-align: center;
-}
+/*.info {*/
+/*  margin: 65px auto 0;*/
+/*  color: #bfbfbf;*/
+/*  font-size: 10px;*/
+/*  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);*/
+/*  text-align: center;*/
+/*}*/
 
-.info p {
-  line-height: 1;
-}
+/*.info p {*/
+/*  line-height: 1;*/
+/*}*/
 
-.info a {
-  color: inherit;
-  text-decoration: none;
-  font-weight: 400;
-}
+/*.info a {*/
+/*  color: inherit;*/
+/*  text-decoration: none;*/
+/*  font-weight: 400;*/
+/*}*/
 
-.info a:hover {
-  text-decoration: underline;
-}
+/*.info a:hover {*/
+/*  text-decoration: underline;*/
+/*}*/
 
 /*
     Hack to remove background from Mobile Safari.
@@ -431,11 +444,7 @@ html .clear-completed:active {
 
 @media (max-width: 430px) {
   .footer {
-    height: 50px;
-  }
-
-  .filters {
-    bottom: 10px;
+    font-size: 2vw;
   }
 }
 </style>

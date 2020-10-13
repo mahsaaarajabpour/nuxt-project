@@ -7,6 +7,7 @@ export const state = () => ({
   items: [],
   editedItem: null,
   userInfo: [],
+  changingItem: null,
 })
 export const getters = {
   Num: state => {
@@ -18,16 +19,35 @@ export const getters = {
   Numbers: state => {
     return state.Numbers
   },
+  Items: state => {
+    return state.items
+  },
+  ChangeItem: state => {
+    return state.changingItem
+  },
   NewItem: state => {
     return state.NewItem
   },
   EditItem: state => {
     return state.editedItem
   },
+  SaveItem: state => {
+    return state.items
+  }
 }
+
+
 export const mutations = {
-  AddUserInfo(state,data){
-    state.userInfo=data
+  Items(state, item) {
+    return state.items = item
+  },
+
+  ChangeItem(state, item) {
+    return state.changingItem = item
+  },
+
+  AddUserInfo(state, data) {
+    state.userInfo = data
   },
 
   Num: (state, payload) => {
@@ -43,10 +63,10 @@ export const mutations = {
       return state.number++
     }
   },
-  checkInput:(state)=>{
-      if(!state.error){
-          state.errorMessage='please fill in the blank'
-      }
+  checkInput: (state) => {
+    if (!state.error) {
+      state.errorMessage = 'please fill in the blank'
+    }
 
   },
   Decrement: (state) => {
@@ -69,6 +89,15 @@ export const mutations = {
       return state.Numbers.push(state.number)
     }
   },
+
+  Completed: (state, item) => {
+    if (item.completed) {
+      return item.completed = false
+    } else {
+      return item.completed = true
+    }
+
+  },
   NewItem: (state, payload) => {
     return state.NewItem = payload
   },
@@ -86,6 +115,13 @@ export const mutations = {
   RemoveItem: (state, item) => {
     state.items.splice(state.items.indexOf(item), 1)
   },
+  RemoveEmpty: (state, item) => {
+    if (state.changingItem == null || state.changingItem === "" || state.changingItem === " ") {
+      state.items.splice(state.items.indexOf(item), 1)
+    } else {
+      return
+    }
+  },
   RemoveActiveItem: (state) => {
     for (let index = 0; index < state.items.length; index++) {
       if (state.items[index].completed) {
@@ -98,18 +134,26 @@ export const mutations = {
     return state.editedItem = item
   },
   SaveItem: (state, item) => {
-    if (!state.editedItem) {
+    item.title = state.changingItem
+    if (!state.changingItem) {
       return
     }
     state.editedItem = null
-    if (!item.title) {
-      this.RemoveItem(item)
-    }
+    state.changingItem = null
   }
 }
+
+
 export const actions = {
-  AddUserInfo({commit}, {data}) {
-    commit('AddUserInfo',data)
+  Items: ({commit}, value) => {
+    commit('Items', value)
+  },
+  ChangeItem: ({commit}, value) => {
+    commit('ChangeItem', value)
+  },
+
+  AddUserInfo: ({commit}, {data}) => {
+    commit('AddUserInfo', data)
   },
 
   Num: ({commit}, payload) => {
@@ -124,6 +168,9 @@ export const actions = {
   AddNum: ({commit}) => {
     commit('AddNum')
   },
+  Completed: ({commit}, {item}) => {
+    commit('Completed', item)
+  },
   NewItem: ({commit}, payload) => {
     commit('NewItem', payload)
   },
@@ -133,13 +180,19 @@ export const actions = {
   RemoveItem: ({commit}, {item}) => {
     commit('RemoveItem', item)
   },
+  RemoveEmpty: ({commit}, {item}) => {
+    commit('RemoveEmpty', item)
+  },
   RemoveActiveItem: ({commit}) => {
     commit('RemoveActiveItem')
   },
   EditItem: ({commit}, {item}) => {
     commit('EditItem', item)
   },
-  SaveItem: ({commit}, {item}) => {
+  SaveItem: ({commit, state}, {item}) => {
+    if (state.changingItem === "" || state.changingItem == null || state.changingItem === " ") {
+      commit('RemoveEmpty', item)
+    }
     commit('SaveItem', item)
   },
 }
