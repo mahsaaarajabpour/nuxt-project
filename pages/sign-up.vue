@@ -45,7 +45,7 @@
         </form>
         <div v-else class="alert-success col-lg-6 col-md-8 col-sm-12  concentrated">
           <p>congratulation you are submit!</p>
-          <p>for login click here <a href="/Login"> LOGIN </a></p>
+          <p>for login click here <a href="/"> LOGIN </a></p>
         </div>
       </div>
     </div>

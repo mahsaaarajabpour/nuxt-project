@@ -6,8 +6,6 @@
   </div>
 </template>
 
-<style>
-</style>
 <script>
 import Footer from "@/pages/Footer";
 import Navbar from "@/pages/Navbar";
@@ -16,6 +14,7 @@ export default {
   components: {Navbar, Footer}
 }
 </script>
+
 <style>
 html {
 
@@ -26,9 +25,12 @@ html {
   /*background-color: #252425; *!*/
 
   position: relative;
-  min-height: 100%;
+  height: 100%;
 }
-
+body{
+  height: 100%;
+  background-color: #928A74;
+}
 #main-default {
   overflow: auto;
   display: flex;
@@ -49,7 +51,6 @@ html {
 .body {
   height: 100%;
   padding-bottom: 50px;
-  background-color: #928A74;
 }
 
 .alert-success {
